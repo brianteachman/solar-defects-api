@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const csvdm = require('../../csvdm');
+const DataManager = require('../../datamanger');
+const csvdm = new DataManager();
 // csvdm.insert(csvdm.test_defects);
 
 /* GET defect listing. */

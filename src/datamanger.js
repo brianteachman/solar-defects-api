@@ -16,25 +16,24 @@ const csvWriter = require("csv-writer").createObjectCsvWriter({
     ]
 });
 
-let dataManager = {
-    data: []
-};
+function DataManager() {
+    this.data = [];
 
-// TODO: Make this asynchronous (using async/await).
-fs.createReadStream('data/defect_data.csv')
-    .pipe(csvParser())
-    .on('data', (row) => {
-        dataManager.data.push(row);
-        // console.log(row);
-    })
-    .on('end', () => {
-        console.log('Data loaded: CSV file successfully processed.');
-    });
+    // TODO: Make this asynchronous (using async/await).
+    fs.createReadStream('data/defect_data.csv')
+        .pipe(csvParser())
+        .on('data', (row) => {
+            this.data.push(row);
+            // console.log(row);
+        })
+        .on('end', () => {
+            console.log('Data loaded: CSV file successfully processed.');
+        });
+}
 
-module.exports.data = dataManager.data;
-
-module.exports.insert = function (defects) {
-    csvWriter.writeRecords(defects).then( () => {
+DataManager.prototype.insert = function (defects) {
+    // TODO: also add to in-memory dataset
+    csvWriter.writeRecords(defects).then(() => {
         console.log('...Done');
     });
 }
@@ -48,9 +47,9 @@ module.exports.insert = function (defects) {
  * @param data
  * @returns {boolean}
  */
-module.exports.loadEntries = function (panelId, data) {
+DataManager.prototype.loadEntries = function (panelId, data) {
     let isMatch = false;
-    dataManager.data.forEach((defect) => {
+    this.data.forEach((defect) => {
         if (defect.Panel_ID === panelId) {
             data.push(defect);
             isMatch = true;
@@ -67,13 +66,18 @@ module.exports.loadEntries = function (panelId, data) {
  * @param panelId
  * @returns {*[]}
  */
-module.exports.getDefects = function (panelId) {
+DataManager.prototype.getDefects = function (panelId) {
     let data = [];
-    dataManager.loadEntries(panelId, data);
+    this.loadEntries(panelId, data);
     return data;
 }
 
-module.exports.test_defects = [
+/**
+ * Just some test data
+ *
+ * @type {[{panel_id: string, date: string, uid: string, found: string, cause: string, location: string, from: string, time: string, defect_type: string}]}
+ */
+DataManager.prototype.test_defects = [
     {
         panel_id: '46832446881',
         date: '10/29/2021',
@@ -108,3 +112,5 @@ module.exports.test_defects = [
         uid: '0028'
     }
 ];
+
+module.exports = DataManager;
