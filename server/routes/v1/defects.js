@@ -12,12 +12,12 @@ router.get('/', function (req, res, next) {
     res.json(csvdm.data);
 });
 
-/* GET defect listing. */
+/* GET defect listing for specific panel. */
 router.get('/id/:panel_id', function (req, res, next) {
     let data = [];
 
     // csvdm.loadEntries mutates data by adding any entries found and returning whether any found.
-    if (csvdm.loadEntries(req.params.panel_id, data)) {
+    if (csvdm.loadEntries(req.params.panel_id, data)) {  // MAGIC: "I'm sorry, I'm not sorry!" - P.W. Herman
         console.log("Yep, " + req.params.panel_id + " exist in data set.");
     } else {
         console.log("Nope, " + req.params.panel_id + " not found in data set.");
