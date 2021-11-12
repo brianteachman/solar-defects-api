@@ -47,10 +47,10 @@ DataManager.prototype.insert = function (defects) {
  * @param data
  * @returns {boolean}
  */
-DataManager.prototype.loadEntries = function (panelId, data) {
+DataManager.prototype.loadEntries = function (key, value, data) {
     let isMatch = false;
     this.data.forEach((defect) => {
-        if (defect.Panel_ID === panelId) {
+        if (defect[key] === value) {
             data.push(defect);
             isMatch = true;
         }
@@ -113,4 +113,5 @@ DataManager.prototype.test_defects = [
     }
 ];
 
-module.exports = DataManager;
+module.exports = new DataManager();
+// module.exports = DataManager;
