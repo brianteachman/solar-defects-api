@@ -40,7 +40,7 @@ router.post('/add', function (req, res) {
     let panel = req.query;  //TODO: validate this input!!
     csvdm.insert([panel]);
     res.json([{
-        title: "So, you'd like to insert?",
+        title: "So, you wanted to insert?",
         panel: [panel]
     }]);
 });
