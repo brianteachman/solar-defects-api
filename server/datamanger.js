@@ -61,14 +61,14 @@ DataManager.prototype.insert = function (defects) {
 /**
  * Adds any entries having a key equal to the given value to the array data and returns true if any found.
  *
- * WARNING: This method mutates the data array.
+ * NOTE: This method mutates the given data array, but does not mutate the in-memory or CSV dataset.
  *
  * @param key
  * @param value
  * @param data
  * @returns {boolean}
  */
-DataManager.prototype.loadEntries = function (key, value, data) {
+DataManager.prototype.select = function (key, value, data) {
     let isMatch = false;
     this.data.forEach((defect) => {
         if (defect[key] === value) {
