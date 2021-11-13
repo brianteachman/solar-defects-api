@@ -59,9 +59,9 @@ DataManager.prototype.insert = function (defects) {
 }
 
 /**
- * Adds any entries having Panel_ID equal to panelId to the list named data and returns true if any found.
+ * Adds any entries having a key equal to the given value to the array data and returns true if any found.
  *
- * WARNING: This method is mutable
+ * WARNING: This method mutates the data array.
  *
  * @param key
  * @param value
@@ -82,6 +82,6 @@ DataManager.prototype.loadEntries = function (key, value, data) {
 // ----------------------------------------------------------------------------
 
 const DATA_FILE = 'data/defect_data.csv';
+module.exports = new DataManager(DATA_FILE);  //TODO: for now this is convenient
 
-module.exports = new DataManager(DATA_FILE);
 // module.exports = DataManager;

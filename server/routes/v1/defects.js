@@ -9,7 +9,7 @@ function selectAll(key, value) {
         console.log("Yep, there are entries from. " + key + ": " + value + ".");
     } else {
         console.log("Nope, " + key + ": " + value + " not found in data set.");
-        data.push({status_code: "404", error_message: "No entries found."});
+        data.push({error: true, error_message: "No entries found."});  // if data[0].error is true, then 404
     }
     return data;
 }
@@ -24,22 +24,21 @@ router.get('/', function (req, res, next) {
 /* GET defect listing for specific panel. */
 router.get('/id/:panel_id', function (req, res, next) {
     let data = selectAll("Panel_ID", req.params.panel_id);
-
-    res.json(data); // Return JSON to the client
+    if (data[0].error) res.status(404);
+    res.json(data);
 });
 
 /* GET defect listing from a specific station. */
 router.get('/station/:from', function (req, res, next) {
     let station = req.params.from;
     let data = selectAll("From", station);
-
-    res.json(data); // Return JSON to the client
+    if (data[0].error) res.status(404);
+    res.json(data);
 });
 
 router.post('/add', function (req, res) {
-    let panel = req.query;
+    let panel = req.query;  //TODO: validate this input!!
     csvdm.insert([panel]);
-
     res.json([{
         title: "So, you'd like to insert?",
         panel: [panel]
