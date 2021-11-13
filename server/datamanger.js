@@ -16,12 +16,6 @@ const csvWriter = require("csv-writer").createObjectCsvWriter({
     ]
 });
 
-function paddedString(num, size) {
-    num = num.toString();
-    while (num.length < size) num = "0" + num;
-    return num;
-}
-
 function DataManager() {
     this.data = [];
 
@@ -37,14 +31,25 @@ function DataManager() {
         });
 }
 
+function padString(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
+
 function getLastUID() {
     return parseInt(this.data[this.data.length - 1].UID);
 }
 
+/**
+ * Insert defect data into memory and the CSV file.
+ *
+ * @param defects
+ */
 DataManager.prototype.insert = function (defects) {
     let size = getLastUID.call(this);
     defects.forEach( (defect) => {
-        // defect.uid = paddedString(++size, 12);  //TODO: this should be done in the view to keep the file size down
+        // defect.uid = padString(++size, 12);  //TODO: this should be done in the view to keep the file size down
         defect.uid = (++size).toString();
         this.data.push(defect);  // Add new entry to in-memory dataset
     })
@@ -71,20 +76,6 @@ DataManager.prototype.loadEntries = function (key, value, data) {
         }
     });
     return isMatch;
-}
-
-/**
- * Return list of entries having Panel_ID equal to panelId if any found.
- *
- * Note: this method is immutable
- *
- * @param panelId
- * @returns {*[]}
- */
-DataManager.prototype.getDefects = function (panelId) {
-    let data = [];
-    this.loadEntries("Panel_ID", panelId, data);
-    return data;
 }
 
 /**
