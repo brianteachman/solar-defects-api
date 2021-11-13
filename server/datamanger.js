@@ -4,17 +4,23 @@ const csvWriter = require("csv-writer").createObjectCsvWriter({
     path: 'data/defect_data.csv',
     append: true,
     header: [ // Panel ID,Date,Time,Location,From,Defect Type,Cause,Found At,UID
-        {id: 'panel_id', title: 'Panel ID'},
+        {id: 'panel_id', title: 'Panel_ID'},
         {id: 'date', title: 'Date'},
         {id: 'time', title: 'Time'},
         {id: 'location', title: 'Location'},
         {id: 'from', title: 'From'},
-        {id: 'defect_type', title: 'Defect Type'},
+        {id: 'defect_type', title: 'Defect_Type'},
         {id: 'cause', title: 'Cause'},
-        {id: 'found', title: 'Found At'},
+        {id: 'found', title: 'Found'},
         {id: 'uid', title: 'UID'}
     ]
 });
+
+function paddedString(num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
 
 function DataManager() {
     this.data = [];
@@ -27,12 +33,21 @@ function DataManager() {
             // console.log(row);
         })
         .on('end', () => {
-            console.log('Data loaded: CSV file successfully processed.');
+            console.log(this.data.length + ' entries loaded: CSV file successfully processed.');
         });
 }
 
+function getLastUID() {
+    return parseInt(this.data[this.data.length - 1].UID);
+}
+
 DataManager.prototype.insert = function (defects) {
-    // TODO: also add to in-memory dataset
+    let size = getLastUID.call(this);
+    defects.forEach( (defect) => {
+        // defect.uid = paddedString(++size, 12);  //TODO: this should be done in the view to keep the file size down
+        defect.uid = (++size).toString();
+        this.data.push(defect);  // Add new entry to in-memory dataset
+    })
     csvWriter.writeRecords(defects).then(() => {
         console.log('...Done');
     });
@@ -68,7 +83,7 @@ DataManager.prototype.loadEntries = function (key, value, data) {
  */
 DataManager.prototype.getDefects = function (panelId) {
     let data = [];
-    this.loadEntries(panelId, data);
+    this.loadEntries("Panel_ID", panelId, data);
     return data;
 }
 
@@ -87,7 +102,6 @@ DataManager.prototype.test_defects = [
         defect_type: 'TD',
         cause: 'Machine',
         found: 'EL PreLam (QC3)',
-        uid: '0026'
     },
     {
         panel_id: '46832446881',
@@ -98,7 +112,6 @@ DataManager.prototype.test_defects = [
         defect_type: 'CC',
         cause: 'Machine',
         found: 'EL PreLam (QC3)',
-        uid: '0027'
     },
     {
         panel_id: '46832446881',
@@ -109,7 +122,6 @@ DataManager.prototype.test_defects = [
         defect_type: 'MS',
         cause: 'Machine',
         found: 'EL PreLam (QC3)',
-        uid: '0028'
     }
 ];
 
