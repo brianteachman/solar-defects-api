@@ -16,11 +16,12 @@ const csvWriter = require("csv-writer").createObjectCsvWriter({
     ]
 });
 
-function DataManager() {
+//
+function DataManager(file) {
     this.data = [];
 
     // TODO: Make this asynchronous (using async/await).
-    fs.createReadStream('data/defect_data.csv')
+    fs.createReadStream(file)
         .pipe(csvParser())
         .on('data', (row) => {
             this.data.push(row);
@@ -116,5 +117,7 @@ DataManager.prototype.test_defects = [
     }
 ];
 
-module.exports = new DataManager();
+const DATA_FILE = 'data/defect_data.csv';
+
+module.exports = new DataManager(DATA_FILE);
 // module.exports = DataManager;
