@@ -25,7 +25,6 @@ function DataManager(file) {
         .pipe(csvParser())
         .on('data', (row) => {
             this.data.push(row);
-            // console.log(row);
         })
         .on('end', () => {
             console.log(this.data.length + ' entries loaded: CSV file successfully processed.');
@@ -64,7 +63,8 @@ DataManager.prototype.insert = function (defects) {
  *
  * WARNING: This method is mutable
  *
- * @param panelId
+ * @param key
+ * @param value
  * @param data
  * @returns {boolean}
  */
@@ -79,43 +79,7 @@ DataManager.prototype.loadEntries = function (key, value, data) {
     return isMatch;
 }
 
-/**
- * Just some test data
- *
- * @type {[{panel_id: string, date: string, uid: string, found: string, cause: string, location: string, from: string, time: string, defect_type: string}]}
- */
-DataManager.prototype.test_defects = [
-    {
-        panel_id: '46832446881',
-        date: '10/29/2021',
-        time: '2:40 AM',
-        location: 'B09',
-        from: 'Stringer 2',
-        defect_type: 'TD',
-        cause: 'Machine',
-        found: 'EL PreLam (QC3)',
-    },
-    {
-        panel_id: '46832446881',
-        date: '10/29/2021',
-        time: '2:40 AM',
-        location: 'B09',
-        from: 'Stringer 2',
-        defect_type: 'CC',
-        cause: 'Machine',
-        found: 'EL PreLam (QC3)',
-    },
-    {
-        panel_id: '46832446881',
-        date: '10/29/2021',
-        time: '2:40 AM',
-        location: 'B09',
-        from: 'Stringer 2',
-        defect_type: 'MS',
-        cause: 'Machine',
-        found: 'EL PreLam (QC3)',
-    }
-];
+// ----------------------------------------------------------------------------
 
 const DATA_FILE = 'data/defect_data.csv';
 
