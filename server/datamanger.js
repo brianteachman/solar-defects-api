@@ -31,14 +31,16 @@ function DataManager(file) {
         });
 }
 
-function padString(num, size) {
+function _padString(num, size) {
     num = num.toString();
     while (num.length < size) num = "0" + num;
     return num;
 }
 
-function getLastUID() {
+function _getLastUID() {
+    if (this.data.length === 0) return 0;
     return parseInt(this.data[this.data.length - 1].UID);
+    // TODO: Fix this calls dependence on the domain dataset
 }
 
 /**
@@ -47,7 +49,7 @@ function getLastUID() {
  * @param defects
  */
 DataManager.prototype.insert = function (defects) {
-    let size = getLastUID.call(this);
+    let size = _getLastUID.call(this);
     defects.forEach( (defect) => {
         // defect.uid = padString(++size, 12);  //TODO: this should be done in the view to keep the file size down
         defect.uid = (++size).toString();
@@ -68,7 +70,7 @@ DataManager.prototype.insert = function (defects) {
  * @param data
  * @returns {boolean}
  */
-DataManager.prototype.select = function (key, value, data) {
+DataManager.prototype.loadData = function (key, value, data) {
     let isMatch = false;
     this.data.forEach((defect) => {
         if (defect[key] === value) {
@@ -77,6 +79,68 @@ DataManager.prototype.select = function (key, value, data) {
         }
     });
     return isMatch;
+}
+
+
+// SEE: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+function _union(arrayA, arrayB) {
+    let setA = new Set(arrayA);
+    let setB = new Set(arrayB);
+    let union = new Set(setA);
+    for (let elem of setB) {
+        union.add(elem);
+    }
+    return [...union];
+}
+
+function _intersection(arrayA, arrayB) {
+    let setA = new Set(arrayA);
+    let setB = new Set(arrayB);
+    let intersection = new Set();
+    for (let elem of setB) {
+        if (setA.has(elem)) {
+            intersection.add(elem);
+        }
+    }
+    // NOTE: the use of the spread operator (...) to convert Set to Array
+    return [...intersection];
+}
+
+/**
+ * Intersects a result set array from filtered arrays using HTTP query arguments.
+ *
+ * Uses Javascript Set
+ *
+ * @param urlQueryObject
+ * @returns {*}
+ */
+DataManager.prototype.filter = function (urlQueryObject) {
+    let filterParamsArray = Object.entries(urlQueryObject);
+    let filtered = [];
+
+    // If there are Query parameters in the URL, then try to filter with them:
+    if (filterParamsArray.length > 0) {
+        filterParamsArray.forEach(([k, v]) => {
+            // console.log(k + ': ' + v);
+            filtered.push(this.data.filter(defect => defect[k] === v));
+        });
+        if (filtered.length === 1) {
+            filtered = filtered[0];
+        } else {
+            let lastSet;
+            for (let i = 0; i < filtered.length; i++) {
+                if (i === 0) {
+                    lastSet = filtered[i];
+                    continue;
+                }
+                lastSet = _intersection(lastSet, filtered[i]);
+            }
+            filtered = lastSet;
+        }
+    } else {
+        filtered = this.data;
+    }
+    return filtered;
 }
 
 // ----------------------------------------------------------------------------

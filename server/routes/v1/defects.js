@@ -6,7 +6,7 @@ const csvdm = require('../../datamanger');
 // selectAll does not mutate the in-memory or CSV dataset
 function selectAll(key, value) {
     let data = [];
-    if (csvdm.select(key, value, data)) {
+    if (csvdm.loadData(key, value, data)) {
         console.log("Yep, there are entries from. " + key + ": " + value + ".");
     } else {
         console.log("Nope, " + key + ": " + value + " not found in data set.");
@@ -17,14 +17,9 @@ function selectAll(key, value) {
 
 /* GET defect listing. */
 router.get('/', function (req, res, next) {
-    let filter = req.query; //TODO: implement filtering
-    console.log(filter);
-    let data = csvdm.data;
-    if (Object.entries(filter).length > 0) {
-        // data = csvdm.data.filter();
-        data = filter;
-    }
-    res.json(data); // Return JSON to the client
+    let urlQueryObject = req.query;
+    let data = csvdm.filter(urlQueryObject);
+    res.status(200).json(data); // Return JSON to the client
 });
 
 /* GET defect listing for specific panel. */
