@@ -1,6 +1,6 @@
 .idea/
 bin/
 node_modules/
-data/
-
+data/*
+!data/defect_data.csv
 package-lock.json
