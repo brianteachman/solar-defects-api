@@ -5,7 +5,7 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('expressapp:server');
+var debug = require('debug')('expressapp:src');
 var http = require('http');
 
 /**
@@ -16,7 +16,7 @@ var port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTP src.
  */
 
 var server = http.createServer(app);
@@ -50,7 +50,7 @@ function normalizePort(val) {
 }
 
 /**
- * Event listener for HTTP server "error" event.
+ * Event listener for HTTP src "error" event.
  */
 
 function onError(error) {
@@ -78,7 +78,7 @@ function onError(error) {
 }
 
 /**
- * Event listener for HTTP server "listening" event.
+ * Event listener for HTTP src "listening" event.
  */
 
 function onListening() {
