@@ -1,6 +1,8 @@
 .idea/
-bin/
+#bin/
 node_modules/
 data/*
 !data/defect_data.csv
+
+.env
 package-lock.json
