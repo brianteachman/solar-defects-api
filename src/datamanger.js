@@ -1,24 +1,29 @@
 const fs = require("fs");
 const csvParser = require('csv-parser');
-const csvWriter = require("csv-writer").createObjectCsvWriter({
-    path: 'data/defect_data.csv',
-    append: true,
-    header: [ // Panel ID,Date,Time,Location,From,Defect Type,Cause,Found At,UID
-        {id: 'panel_id', title: 'Panel_ID'},
-        {id: 'date', title: 'Date'},
-        {id: 'time', title: 'Time'},
-        {id: 'location', title: 'Location'},
-        {id: 'from', title: 'From'},
-        {id: 'defect_type', title: 'Defect_Type'},
-        {id: 'cause', title: 'Cause'},
-        {id: 'found', title: 'Found'},
-        {id: 'uid', title: 'UID'}
-    ]
-});
+const createCsvWriter = require("csv-writer");
+
+let csvWriter;
+let csvHeaders = [ // Panel ID,Date,Time,Location,From,Defect Type,Cause,Found At,UID
+    {id: 'Panel_ID', title: 'Panel_ID'},
+    {id: 'Date', title: 'Date'},
+    {id: 'Time', title: 'Time'},
+    {id: 'Location', title: 'Location'},
+    {id: 'From', title: 'From'},
+    {id: 'Defect_Type', title: 'Defect_Type'},
+    {id: 'Cause', title: 'Cause'},
+    {id: 'Found', title: 'Found'},
+    {id: 'UID', title: 'UID'}
+];
 
 //
 function DataManager(file) {
     this.data = [];
+
+    csvWriter = createCsvWriter.createObjectCsvWriter({
+        path: file,
+        append: true,
+        header: csvHeaders
+    });
 
     // TODO: Make this asynchronous (using async/await).
     fs.createReadStream(file)
@@ -31,16 +36,38 @@ function DataManager(file) {
         });
 }
 
-DataManager.prototype.padZeros = function (num, size) {
-    num = num.toString();
-    while (num.length < size) num = "0" + num;
-    return num;
-}
-
 function _getLastUID() {
     if (this.data.length === 0) return 0;
     return parseInt(this.data[this.data.length - 1].UID);
     // TODO: Fix this calls dependence on the domain dataset
+}
+
+function _union(arrayA, arrayB) {
+    let setA = new Set(arrayA);
+    let setB = new Set(arrayB);
+    let union = new Set(setA);
+    for (let elem of setB) {
+        union.add(elem);
+    }
+    return [...union];
+}
+
+function _intersection(arrayA, arrayB) {
+    let setA = new Set(arrayA);
+    let setB = new Set(arrayB);
+    let intersection = new Set();
+    for (let elem of setB) {
+        if (setA.has(elem)) {
+            intersection.add(elem);
+        }
+    }
+    // NOTE: the use of the spread operator (...) to convert Set to Array
+    return [...intersection];
+}
+
+
+DataManager.prototype.nextUID = function () {
+    return _getLastUID.call(this) + 1;
 }
 
 /**
@@ -49,14 +76,13 @@ function _getLastUID() {
  * @param defects
  */
 DataManager.prototype.insert = function (defects) {
-    let size = _getLastUID.call(this);
+    let uid = this.nextUID();
     defects.forEach( (defect) => {
-        // defect.uid = padString(++size, 12);  //TODO: this should be done in the view to keep the file size down
-        defect.uid = (++size).toString();
+        defect.UID = uid.toString();
         this.data.push(defect);  // Add new entry to in-memory dataset
     })
     csvWriter.writeRecords(defects).then(() => {
-        console.log('...Done');
+        console.log(defects.length + ' defect(s) have been added.');
     });
 }
 
@@ -81,31 +107,6 @@ DataManager.prototype.loadData = function (key, value, data) {
     return isMatch;
 }
 
-
-// SEE: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
-function _union(arrayA, arrayB) {
-    let setA = new Set(arrayA);
-    let setB = new Set(arrayB);
-    let union = new Set(setA);
-    for (let elem of setB) {
-        union.add(elem);
-    }
-    return [...union];
-}
-
-function _intersection(arrayA, arrayB) {
-    let setA = new Set(arrayA);
-    let setB = new Set(arrayB);
-    let intersection = new Set();
-    for (let elem of setB) {
-        if (setA.has(elem)) {
-            intersection.add(elem);
-        }
-    }
-    // NOTE: the use of the spread operator (...) to convert Set to Array
-    return [...intersection];
-}
-
 /**
  * Intersects a result set array from filtered arrays using HTTP query arguments.
  *
@@ -121,7 +122,6 @@ DataManager.prototype.filter = function (urlQueryObject) {
     // If there are Query parameters in the URL, then try to filter with them:
     if (filterParamsArray.length > 0) {
         filterParamsArray.forEach(([k, v]) => {
-            // console.log(k + ': ' + v);
             filtered.push(this.data.filter(defect => defect[k] === v));
         });
         if (filtered.length === 1) {
@@ -143,9 +143,15 @@ DataManager.prototype.filter = function (urlQueryObject) {
     return filtered;
 }
 
+DataManager.prototype.padZeros = function (num, size) {
+    num = num.toString();
+    while (num.length < size) num = "0" + num;
+    return num;
+}
+
 // ----------------------------------------------------------------------------
 
-const DATA_FILE = 'data/defect_data.csv';
-module.exports = new DataManager(DATA_FILE);  //TODO: for now this is convenient
+// const DATA_FILE = 'data/defect_data.csv';
+// module.exports = new DataManager(DATA_FILE);  //TODO: for now this is convenient
 
-// module.exports = DataManager;
+module.exports = DataManager;
