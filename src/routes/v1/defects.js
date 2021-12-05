@@ -1,5 +1,8 @@
+const axios = require('axios').default;
 const express = require('express');
 const router = express.Router();
+
+// import axios from 'axios';
 
 const DataManager = require('../../datamanger');
 const dm = new DataManager("data/defect_data.csv");

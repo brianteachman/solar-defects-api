@@ -13,6 +13,68 @@
     <li><a href="/v1/users">Users API</a></li>
     <li><a href="/v1/defects">Defects API</a></li>
   </ul>
+  <div>
+    <form name="add-defect" action="">
+      <label for="panel_id">Serial #</label>
+      <input type="text" name="panel_id" placeholder="202112041314w" autofocus>
+      <label for="from">from</label>
+      <select name="from" id="from">
+        <option>Stringer 1</option>
+        <option>Stringer 2</option>
+        <option>Stringer 3</option>
+        <option></option>
+      </select>
+      <label for="type">has</label>
+      <select name="type" id="type">
+        <option>Cell Crack</option>
+        <option>Missed Solder</option>
+        <option>Tab Drop</option>
+      </select>
+      <label for="location">at</label>
+      <input type="text" name="location" placeholder="A11">
+      <label for="found">found at</label>
+      <select name="found" id="found">
+        <option>Pre-Solder (QC1)</option>
+        <option>Post-Solder (QC2)</option>
+        <option>EL PreLam (QC3)</option>
+      </select>
+      <label for="cause">caused by</label>
+      <select name="cause" id="cause">
+        <option>Machine</option>
+        <option>Operator</option>
+      </select>
+      <button id="save" onclick="submitPanel();">Save</button>
+    </form>
+  </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  function submitPanel() {
+    let form = document.forms["add-defect"];
+    let dt = new Date();
+    let ampm = (dt.getHours() >= 12) ? "PM": "AM";
+    let hour = dt.getHours() % 12; //convert 24hr to 12hr
+    hour = hour ? hour : 12;       //convert 0hr to 12 AM
+    let minutes = dt.getMinutes();
+    if (minutes < 10) '0' + minutes;
+    let time = hour + ":" + minutes + " " + ampm;
+
+    axios.post('/' + form["panel_id"].value, {
+      Date: dt.getMonth() + "/" + dt.getDay() + "/" + dt.getFullYear(),
+      Time: time,
+      Location: form["location"].value,
+      From: form["from"].value,
+      Defect_Type: form["type"].value,
+      Cause: form["cause"].value,
+      Found: form["found"].value
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    }
+</script>
 </html>
