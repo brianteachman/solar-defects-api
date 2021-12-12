@@ -22,6 +22,7 @@
         <option>Stringer 1</option>
         <option>Stringer 2</option>
         <option>Stringer 3</option>
+        <option>SolderBot</option>
         <option>Laminator 1</option>
         <option>Laminator 2</option>
         <option>Laminator 3</option>
@@ -70,12 +71,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  document.getElementById("add-defect").addEventListener("submit", submitPanel);
+  let form = document.forms["add-defect"];
+  form.addEventListener("submit", submitDefect);
 
-  function submitPanel(e) {
+
+  function submitDefect(e) {
     e.preventDefault();  // Stop default POST behavior
 
-    let form = document.forms["add-defect"];
+    // Let's format the date and time.
     let dt = new Date();
     let ampm = (dt.getHours() >= 12) ? "PM": "AM";
     let hour = dt.getHours() % 12; //convert 24hr to 12hr
@@ -84,6 +87,7 @@
     if (minutes < 10) '0' + minutes;
     let time = hour + ":" + minutes + " " + ampm;
 
+    // Compose data object.
     let panelData = {
       Date: dt.getMonth() + "/" + dt.getDay() + "/" + dt.getFullYear(),
       Time: time,
@@ -94,6 +98,7 @@
       Found: form["found"].value
     };
 
+    // Send POSt request with data.
     axios.post('/v1/defects/' + form["panel_id"].value, panelData)
          .then(function (response) {
            console.log("Submission posted.");
