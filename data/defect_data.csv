@@ -19,3 +19,4 @@ Panel_ID,Date,Time,Location,From,Defect_Type,Cause,Found,UID
 46832446881,10/29/2021,2:40 AM,B09,Stringer 2,MS,Machine,EL PreLam (QC3),34
 46832447003,10/29/2021,3:38 PM,A01,Stringer 3,CC,Machine,EL PreLam (QC3),35
 46832447005,10/29/2021,3:40 PM,B03,Stringer 3,TD,Machine,EL PreLam (QC3),36
+202112041314w,11/0/2021,2:29 AM,A10,Stringer 3,Missed Solder (MS),Machine,Post-Solder (QC2),37
