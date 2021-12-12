@@ -69,10 +69,7 @@ router.post('/:panel_id', function (req, res) {
 
     console.log([panel_data]);
     dm.insert([panel_data]);
-    res.json([{
-        title: "So, you wanted to insert?",
-        panel: [panel_data]
-    }]);
+    res.sendStatus(200);
 });
 
 module.exports = router;
