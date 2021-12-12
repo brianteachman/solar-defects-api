@@ -14,7 +14,7 @@
     <li><a href="/v1/defects">Defects API</a></li>
   </ul>
   <div>
-    <form name="add-defect" action="">
+    <form id="add-defect" action="">
       <label for="panel_id">Serial #</label>
       <input type="text" name="panel_id" placeholder="202112041314w" autofocus>
       <label for="from">from</label>
@@ -43,14 +43,18 @@
         <option>Machine</option>
         <option>Operator</option>
       </select>
-      <button id="save" onclick="submitPanel();">Save</button>
+      <button type="submit" id="save">Save</button>
     </form>
   </div>
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  function submitPanel() {
+  document.getElementById("add-defect").addEventListener("submit", submitPanel);
+
+  function submitPanel(e) {
+    e.preventDefault();  // Stop default POST behavior
+
     let form = document.forms["add-defect"];
     let dt = new Date();
     let ampm = (dt.getHours() >= 12) ? "PM": "AM";
@@ -60,7 +64,7 @@
     if (minutes < 10) '0' + minutes;
     let time = hour + ":" + minutes + " " + ampm;
 
-    axios.post('/' + form["panel_id"].value, {
+    let panelData = {
       Date: dt.getMonth() + "/" + dt.getDay() + "/" + dt.getFullYear(),
       Time: time,
       Location: form["location"].value,
@@ -68,13 +72,18 @@
       Defect_Type: form["type"].value,
       Cause: form["cause"].value,
       Found: form["found"].value
-    })
-    .then(function (response) {
-      console.log(response);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-    }
+    };
+
+    axios.post('/v1/defects/' + form["panel_id"].value, panelData)
+         .then(function (response) {
+           console.log("Submission posted.");
+           console.log(response);
+           console.log(panelData);
+         })
+         .catch(function (error) {
+           console.log("Submission failed.");
+           console.log(error);
+         });
+  }
 </script>
 </html>

@@ -62,12 +62,12 @@ router.post('/:panel_id', function (req, res) {
     }
 
     let panel_data = {Panel_ID: req.params.panel_id};
-    Object.entries(req.query).forEach( ([k,v]) => {
+    Object.entries(req.body).forEach( ([k,v]) => {
         //TODO: validate this input!!
         panel_data[k] = v;
     })
 
-    // console.log([panel_data]);
+    console.log([panel_data]);
     dm.insert([panel_data]);
     res.json([{
         title: "So, you wanted to insert?",
