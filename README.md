@@ -19,4 +19,16 @@ Fetch all MS defects from Stringer 1:
 
 Adding defect entries involves POST'ing a request having the panel's serial number as a URL parameter and the rest of the panel data as a URL query. This data will exclude the UID element as that is dynamically determined at time of insertion. 
 
-- POST `/v1/defects/46832447010?Date=11/13/2021&Time=10:40+PM&Location=E04&From=Stringer+3&Defect_Type=CC&Cause=Machine&Found=EL+PreLam+(QC3)`
+- POST `/v1/defects/46832447010`
+
+Request body:
+
+        {
+            Date: 11/13/2021,
+            Time: 10:40+PM,
+            Location: E04,
+            From: Stringer 3,
+            Defect_Type: CC,
+            Cause: Machine,
+            Found: EL PreLam (QC3)
+        }
