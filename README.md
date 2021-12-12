@@ -17,7 +17,7 @@ Fetch all MS defects from Stringer 1:
 
 - GET [/v1/defects?Panel_ID=46832446881&Defect_Type=CC](https://defect-api.herokuapp.com/v1/defects?From=Stringer+1&Defect_Type=MS)
 
-Adding defect entries involves POST'ing a request having the panel's serial number as a URL parameter and the rest of the panel data as a URL query. This data will exclude the UID element as that is dynamically determined at time of insertion. 
+Adding defect entries involves sending a POST request having the panel's serial number as a URL parameter and the rest of the panel data in the request body. This data will exclude the UID element as that is dynamically determined at time of insertion. 
 
 - POST `/v1/defects/46832447010`
 
